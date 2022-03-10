@@ -1,4 +1,4 @@
-module adder (
+module adder_unit (
     //input clk,  // clock
     //input rst,  // reset
     input x[16] ,//16-bit input x
