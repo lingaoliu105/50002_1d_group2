@@ -1,0 +1,12 @@
+module multiplier (
+    // inputs
+    input a[16],
+    input b[16],
+    //outputs
+    output out[16]
+  ) {
+
+  always {
+    out = a*b;
+  }
+}

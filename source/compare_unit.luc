@@ -1,0 +1,21 @@
+module compare_unit (
+ 
+    // inputs
+    input signal[6],
+    input n,
+    input v,
+    input z,
+    //outputs
+    output cout[16]
+  ) {
+  
+  always {
+    case (signal[5:4]) {
+      cout = 16b0;
+      b00: cout[0] = 0;
+      b01: cout[0] = z;
+      b10: cout[0] = n ^ v;
+      b11: cout[0] = z | (n ^ v);
+    } 
+  }
+}
