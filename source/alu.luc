@@ -11,9 +11,9 @@ module alu (
   shifter_unit shifterUnit;
   
   always {
-    adderUnit.alufn = aluin;
-    adderUnit.x = a;
-    adderUnit.y = b;
+    adderUnit.alufn_signal = aluin;
+    adderUnit.a = a;
+    adderUnit.b = b;
     
     zvn[0] = adderUnit.z;
     zvn[1] = adderUnit.v;
@@ -33,7 +33,7 @@ module alu (
     shifterUnit.alufn_signal = aluin;
     
     case(aluin[5:4]) {
-      b00 : result = adderUnit.cout;
+      b00 : result = adderUnit.out;
       b01 : result = booleanUnit.out;
       b10 : result = shifterUnit.result;
       b11 : result = compareUnit.cout;

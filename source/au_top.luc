@@ -5,7 +5,11 @@ module au_top (
     input usb_rx,           // USB->Serial input
     output usb_tx,          // USB->Serial output
     input io_button [5],    // 5 buttons on IO Shield
-    input io_dip [3][8]     // DIP switches on IO Shield
+    input io_dip [3][8],     // DIP switches on IO Shield
+    output io_led [3][8],
+    output io_sel [4],
+    output io_seg [8]
+    
   ) {
   
   sig rst;                  // reset signal
@@ -30,7 +34,14 @@ module au_top (
     rst = reset_cond.out;   // conditioned reset
     usb_tx = usb_rx;        // loop serial port
     
-    address = b10010; // Address to be from FSM
+    
+    
+    
+    address = b00000; // Address to be from FSM
+    
+    
+    
+    
     
     // Generate an equation from ROM
     r.address = address;
@@ -44,16 +55,21 @@ module au_top (
     a.a = agen;
     a.b = bgen;
     a.aluin = alufngen;
-    
+   
+
+    io_led = 3x{{8h00}};
+    io_seg=8hff;
+    io_sel=4hf;
+    led = 8h00;
     // Compare results
-    if (a.zvn == zvngen && a.result == outgen) {
-      led = 8hFF;  // turn LEDs on
+    if (a.zvn == zvngen && a.result == outgen) {    //
+      io_led[0][0] = 8hFF;  // turn LEDs on
       } else {
-        led = 8h00;  // turn LEDs off
+        io_led[0][0] = 8h00;  // turn LEDs off
       }
     
-
-    
-    
+    // LED show ZVN
+    io_led[1][2:0] = a.zvn; 
+    io_led[2][2:0] = zvngen;
   }
 }
