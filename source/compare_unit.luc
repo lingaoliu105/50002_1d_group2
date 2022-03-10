@@ -10,8 +10,9 @@ module compare_unit (
   ) {
   
   always {
+    cout = 16b0;
     case (signal[5:4]) {
-      cout = 16b0;
+      
       b00: cout[0] = 0;
       b01: cout[0] = z;
       b10: cout[0] = n ^ v;
