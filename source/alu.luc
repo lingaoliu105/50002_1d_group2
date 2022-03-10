@@ -15,9 +15,9 @@ module alu (
     adderUnit.a = a;
     adderUnit.b = b;
     
-    zvn[0] = adderUnit.z;
+    zvn[2] = adderUnit.z;
     zvn[1] = adderUnit.v;
-    zvn[2] = adderUnit.n;
+    zvn[0] = adderUnit.n;
     
     compareUnit.signal = aluin;
     compareUnit.z = adderUnit.z;
