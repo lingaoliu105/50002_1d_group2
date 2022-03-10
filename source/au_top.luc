@@ -21,7 +21,8 @@ module au_top (
   sig outgen[16];
   rom r;
   alu a;
-  
+  counter slowclock(#SIZE(1),#DIV(26),.clk(clk),.rst(rst));
+  fsm fsm_t(.clk(slowclock.value),.rst(rst))={S0,S1,S2,S3,S4,S5,S6,S7,S8,S9,S10,S11,S12};
   
   .clk(clk) {
     // The reset conditioner is used to synchronize the reset signal to the FPGA
@@ -34,14 +35,8 @@ module au_top (
     rst = reset_cond.out;   // conditioned reset
     usb_tx = usb_rx;        // loop serial port
     
-    
-    
-    
-    address = b00000; // Address to be from FSM
-    
-    
-    
-    
+    // The very first default address
+    address = b00000; 
     
     // Generate an equation from ROM
     r.address = address;
@@ -55,18 +50,73 @@ module au_top (
     a.a = agen;
     a.b = bgen;
     a.aluin = alufngen;
-   
-
+     
+    // Please remain unchanged:
     io_led = 3x{{8h00}};
     io_seg=8hff;
     io_sel=4hf;
     led = 8h00;
+    
+    // FSM running
+    case (fsm_t.q){
+      fsm_t.S0:
+      r.address=5b0;
+      fsm_t.d=fsm_t.S1;
+      fsm_t.S1:
+      r.address=5b1;
+      fsm_t.d=fsm_t.S2;
+      fsm_t.S2:
+      r.address=5b10;
+      fsm_t.d=fsm_t.S3;              
+      fsm_t.S3:
+      r.address=5b11;
+      fsm_t.d=fsm_t.S4;
+      fsm_t.S4:
+      r.address=5b100;
+      fsm_t.d=fsm_t.S5;
+      fsm_t.S5:
+      r.address=5b101;
+      fsm_t.d=fsm_t.S6;
+      fsm_t.S6:
+      r.address=5b110;
+      fsm_t.d=fsm_t.S7;
+      fsm_t.S7:
+      r.address=5b111;
+      fsm_t.d=fsm_t.S8;
+      fsm_t.S8:
+      r.address=5b1000;
+      fsm_t.d=fsm_t.S9;
+      fsm_t.S9:
+      r.address=5b1001;
+      fsm_t.d=fsm_t.S10;
+      fsm_t.S10:
+      r.address=5b1010;
+      fsm_t.d=fsm_t.S11;
+      fsm_t.S11:
+      r.address=5b1011;
+      fsm_t.d=fsm_t.S12;
+      fsm_t.S12:
+      r.address=5b1100;
+      fsm_t.d=fsm_t.S0;
+      }
+    
     // Compare results
-    if (a.zvn == zvngen && a.result == outgen) {    //
+    
+    if (alufngen == 000000 || alufngen == 000001 || alufngen[5:4] == 11) {
+      if (a.result == outgen && a.zvn == zvngen ) {
       io_led[0][0] = 8hFF;  // turn LEDs on
       } else {
         io_led[0][0] = 8h00;  // turn LEDs off
       }
+    } else {
+      if (a.result == outgen) {
+      io_led[0][0] = 8hFF;  // turn LEDs on
+      } else {
+        io_led[0][0] = 8h00;  // turn LEDs off
+      }
+      }
+    
+    
     
     // LED show ZVN
     io_led[1][2:0] = a.zvn; 
