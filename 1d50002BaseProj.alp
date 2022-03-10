@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="1d50002BaseProj" board="Alchitry Au" language="Lucid" version="3">
+  <files>
+    <component>counter.luc</component>
+    <src>fsm1.luc</src>
+    <src>shifter_unit.luc</src>
+    <src top="true">au_top.luc</src>
+    <component>reset_conditioner.luc</component>
+    <src>boolean_unit.luc</src>
+    <src>adder_unit.luc</src>
+    <src>compare_unit.luc</src>
+    <src>rom.luc</src>
+    <src>alu.luc</src>
+    <constraint lib="true">au.xdc</constraint>
+    <constraint lib="true">io.acf</constraint>
+    <constraint lib="true">alchitry.acf</constraint>
+  </files>
+</project>
