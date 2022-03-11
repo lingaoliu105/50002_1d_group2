@@ -5,9 +5,9 @@ ROM, ALU
 
 Things to do:
 
-implement FSM [x]
+- [x] implement FSM
 
-check zvn [x] 
+- [x] check zvn
 
 change variable names
 
