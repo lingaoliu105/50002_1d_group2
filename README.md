@@ -17,4 +17,4 @@ Things to do:
 
 - [ ] complete documentation, specify input & output format
 
-- [ ]write report
+- [ ] write report
