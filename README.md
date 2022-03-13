@@ -9,12 +9,12 @@ Things to do:
 
 - [x] check zvn
 
-- [ ] change variable names
+- [x] change variable names
 
-- [ ] modify rom (test cases) & FSM states
+- [x] modify rom (test cases) & FSM states
 
 - [ ] add a new multiplier submodule
 
-- [ ] complete documentation, specify input & output format
+- [x] complete documentation, specify input & output format
 
 - [ ] write report
