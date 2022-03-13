@@ -1,9 +1,9 @@
 module adder_unit (
-// Note: a & b are 8-bit inputs. ALUFN is a 6-bit input
+// Note: a & b are 16-bit inputs. ALUFN is a 6-bit input
 // z, v, n are all 1-bit outputs.
     input a[16],
     input b[16],
-    input alufn_signal[6],
+    input alufn[6],
     output out[16],
     output z[1],
     output v[1],
@@ -17,13 +17,13 @@ module adder_unit (
     s = 16b0; 
 
     
-    case(alufn_signal[0]){
+    case(alufn[0]){
       0: s = a+b;
       1: s = a-b;
       default: s = 16b0;
   }
     n = s[15];
-    v = (a[15] & (b[15] ^ alufn_signal[0]) & !s[15]) | (!a[15] & !(b[15] ^ alufn_signal[0]) & s[15]); 
+    v = (a[15] & (b[15] ^ alufn[0]) & !s[15]) | (!a[15] & !(b[15] ^ alufn[0]) & s[15]); 
     z = ~|s;
     out = s;
   }

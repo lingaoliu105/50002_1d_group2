@@ -1,22 +1,28 @@
 module rom (
-    input address[5],  // reset 
+    input address[4],  //address is 4 bit, encoding the index (from righ to left) of the test case in the arrays
     output outA[16], 
     output outB[16], 
     output alufn[6], 
     output outZVN[3], 
-    output out[16] 
+    output out[16],
+    output addr[4] //address is retrieved to be displayed
   ) {
-  const A = {16b0, 16b01, 16b1, 16b0, 16b01, 16b1111111111111111, 16b0, 16b0100000000000001, 16b0000000000000001,16b1111111111111111, 16b1111111111111111,16b0, 16b0};
-  const B = {16b0, 16b0, 16b0, 16b1, 16b11, 16b1111111111111111, 16b1, 16b0000000000000011, 16b1111111111111111, 16b1111111111111000, 16b1111111111111111, 16b0, 16b0};
-  const AL = {b000000, b000001, b011000, b011110, b010110, b100011, b011010, b000010, b000010, b000010, b000010, b110011, b110101}; 
-  const ZVN = {b100, b000, b100, b000, b000, b000, b100, b011, b001, b011, b011, b100, b100}; 
-  const O = {16b0, 16b01, 16b0, 16b1, 16b10, 16b1111111111111111, 16b0,16b1100000000000011,16b1111111111111111, 16b0000000000001000,16b0000000000000001, 16b0000000000000001,16b0000000000000000}; 
-  
+    //arrays storing test cases
+    //the set of a,b,al(alufn),zvn,o(output) at the same index forms a test case
+    //since address is 5 bit, we can store at most 16 test cases at a time
+    //new test cases can be manually entered here
+  const A = {16b0,16b0,16b0,16b0, 16b01, 16b1, 16b0, 16b01, 16b1111111111111111, 16b0, 16b0100000000000001, 16b0000000000000001,16b1111111111111111, 16b1111111111111111,16b0, 16b0};
+  const B = {16b0,16b0,16b0,16b0, 16b0, 16b0, 16b1, 16b11, 16b1111111111111111, 16b1, 16b0000000000000011, 16b1111111111111111, 16b1111111111111000, 16b1111111111111111, 16b0, 16b0};
+  const AL = {6b0,6b0,6b0,b000000, b000001, b011000, b011110, b010110, b100011, b011010, b000010, b000010, b000010, b000010, b110011, b110101}; 
+  const ZVN ={b100,b100,b100,b100, b000, b100, b000, b000, b000, b100, b011, b001, b011, b011, b100, b100}; 
+  const O = {16b0,16b0,16b0,16b0, 16b01, 16b0, 16b1, 16b10, 16b1111111111111111, 16b0,16b1100000000000011,16b1111111111111111, 16b0000000000001000,16b0000000000000001, 16b0000000000000001,16b0000000000000000}; 
+ 
   always {
     outA = A[address]; 
     outB = B[address]; 
     alufn = AL[address]; 
     outZVN = ZVN[address]; 
     out = O[address];
+    addr=address;
   }
 }
