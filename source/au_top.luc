@@ -8,48 +8,307 @@ module au_top (
     input io_dip [3][8],     // DIP switches on IO Shield
     output io_led [3][8],
     output io_sel [4],
-    output io_seg [8]
-    
+    output io_seg [8],
+    output redout,
+    output greenout,
+    output yellowout,
+    output blueout,
+    input redin,
+    input greenin,
+    input yellowin,
+    input bluein,
+    input start,
+    input reset
   ) {
   
-  sig rst;                  // reset signal
-  // counter slowclock(#SIZE(1),#DIV(26),.clk(clk),.rst(rst));
-  button_conditioner buttoncond(.clk(clk));
-  edge_detector buttondetector(#RISE(1), #FALL(0), .clk(clk));
-  tester test;
+  sig rst;
+  edge_detector timer (#RISE(1), #FALL(0),.clk(clk));
+  counter slowclock(#SIZE(1),#DIV(26),.clk(clk),.rst(rst));
+
+  control_unit control(.clk(clk),.rst(rst));
+  regfile reg(.clk(clk),.rst(rst));
+  pn_gen generator(.clk(clk),.rst(rst));
+  alu alu;  
+  
+  button_conditioner buttonCond1(.clk(clk));
+  button_conditioner buttonCond2(.clk(clk));
+  button_conditioner buttonCond3(.clk(clk));
+  button_conditioner buttonCond4(.clk(clk));
+  button_conditioner buttonCond5(.clk(clk));
+  button_conditioner buttonCond6(.clk(clk));
+
+  edge_detector edgeDetect1(#RISE(1), #FALL(0),.clk(clk));
+  edge_detector edgeDetect2(#RISE(1), #FALL(0),.clk(clk));
+  edge_detector edgeDetect3(#RISE(1), #FALL(0),.clk(clk));
+  edge_detector edgeDetect4(#RISE(1), #FALL(0),.clk(clk));
+  edge_detector edgeDetect5(#RISE(1), #FALL(0),.clk(clk));
+  edge_detector edgeDetect6(#RISE(1), #FALL(0),.clk(clk));
+
   .clk(clk) {
     // The reset conditioner is used to synchronize the reset signal to the FPGA
     // clock. This ensures the entire FPGA comes out of reset at the same time.
     reset_conditioner reset_cond;
-    
+    .rst(rst) {
+       multi_seven_seg seg_display;
+ }
   }
   
   always {
+  
+    timer.in = slowclock.value;
+    
     reset_cond.in = ~rst_n; // input raw inverted reset signal
     rst = reset_cond.out;   // conditioned reset
     usb_tx = usb_rx;        // loop serial port
-      
-    // Configure button here
-    buttoncond.in = io_button[0];
-    buttondetector.in = buttoncond.out; 
     
-     
-    // Please remain unchanged:
+    // default values:
     io_led = 3x{{8h00}};
     io_seg=8hff;
     io_sel=4hf;
     led = 8h00;
     
-    test.rst = rst;
-    test.clk = clk;
-    test.btn = buttondetector.out;
+    //connect the buttons
+    buttonCond1.in=bluein; 
+    edgeDetect1.in=buttonCond1.out;
+    buttonCond2.in=yellowin; 
+    edgeDetect2.in=buttonCond2.out;
+    buttonCond3.in=greenin; 
+    edgeDetect3.in=buttonCond3.out;
+    buttonCond4.in=redin; 
+    edgeDetect4.in=buttonCond4.out;
+    buttonCond5.in=start; 
+    edgeDetect5.in=buttonCond5.out;
+    buttonCond6.in=reset;
+    edgeDetect6.in=buttonCond6.out;
     
-    // LED show ZVN
-    io_led = test.io_led;
+    if (reg.score>=d100){  //no display when score exceeds 100
+      seg_display.values={4d0,4b0,4d0,4d0};
+      seg_display.decimal=4b0;
+      io_seg = ~seg_display.seg;
+      io_sel=b1111;}
+    else{
+      seg_display.values={4b0,4b0,4d0,4d0};
+      //display score accordingly:
+      if (reg.score== 0){ seg_display.values={control.button_count,4b0,4d0,4d0};}
+      if (reg.score== 1){ seg_display.values={control.button_count,4b0,4d0,4d1};}
+      if (reg.score== 2){ seg_display.values={control.button_count,4b0,4d0,4d2};}
+      if (reg.score== 3){ seg_display.values={control.button_count,4b0,4d0,4d3};}
+      if (reg.score== 4){ seg_display.values={control.button_count,4b0,4d0,4d4};}
+      if (reg.score== 5){ seg_display.values={control.button_count,4b0,4d0,4d5};}
+      if (reg.score== 6){ seg_display.values={control.button_count,4b0,4d0,4d6};}
+      if (reg.score== 7){ seg_display.values={control.button_count,4b0,4d0,4d7};}
+      if (reg.score== 8){ seg_display.values={control.button_count,4b0,4d0,4d8};}
+      if (reg.score== 9){ seg_display.values={control.button_count,4b0,4d0,4d9};}
+      if (reg.score== 10){ seg_display.values={control.button_count,4b0,4d1,4d0};}
+      if (reg.score== 11){ seg_display.values={control.button_count,4b0,4d1,4d1};}
+      if (reg.score== 12){ seg_display.values={control.button_count,4b0,4d1,4d2};}
+      if (reg.score== 13){ seg_display.values={control.button_count,4b0,4d1,4d3};}
+      if (reg.score== 14){ seg_display.values={control.button_count,4b0,4d1,4d4};}
+      if (reg.score== 15){ seg_display.values={control.button_count,4b0,4d1,4d5};}
+      if (reg.score== 16){ seg_display.values={control.button_count,4b0,4d1,4d6};}
+      if (reg.score== 17){ seg_display.values={control.button_count,4b0,4d1,4d7};}
+      if (reg.score== 18){ seg_display.values={control.button_count,4b0,4d1,4d8};}
+      if (reg.score== 19){ seg_display.values={control.button_count,4b0,4d1,4d9};}
+      if (reg.score== 20){ seg_display.values={control.button_count,4b0,4d2,4d0};}
+      if (reg.score== 21){ seg_display.values={control.button_count,4b0,4d2,4d1};}
+      if (reg.score== 22){ seg_display.values={control.button_count,4b0,4d2,4d2};}
+      if (reg.score== 23){ seg_display.values={control.button_count,4b0,4d2,4d3};}
+      if (reg.score== 24){ seg_display.values={control.button_count,4b0,4d2,4d4};}
+      if (reg.score== 25){ seg_display.values={control.button_count,4b0,4d2,4d5};}
+      if (reg.score== 26){ seg_display.values={control.button_count,4b0,4d2,4d6};}
+      if (reg.score== 27){ seg_display.values={control.button_count,4b0,4d2,4d7};}
+      if (reg.score== 28){ seg_display.values={control.button_count,4b0,4d2,4d8};}
+      if (reg.score== 29){ seg_display.values={control.button_count,4b0,4d2,4d9};}
+      if (reg.score== 30){ seg_display.values={control.button_count,4b0,4d3,4d0};}
+      if (reg.score== 31){ seg_display.values={control.button_count,4b0,4d3,4d1};}
+      if (reg.score== 32){ seg_display.values={control.button_count,4b0,4d3,4d2};}
+      if (reg.score== 33){ seg_display.values={control.button_count,4b0,4d3,4d3};}
+      if (reg.score== 34){ seg_display.values={control.button_count,4b0,4d3,4d4};}
+      if (reg.score== 35){ seg_display.values={control.button_count,4b0,4d3,4d5};}
+      if (reg.score== 36){ seg_display.values={control.button_count,4b0,4d3,4d6};}
+      if (reg.score== 37){ seg_display.values={control.button_count,4b0,4d3,4d7};}
+      if (reg.score== 38){ seg_display.values={control.button_count,4b0,4d3,4d8};}
+      if (reg.score== 39){ seg_display.values={control.button_count,4b0,4d3,4d9};}
+      if (reg.score== 40){ seg_display.values={control.button_count,4b0,4d4,4d0};}
+      if (reg.score== 41){ seg_display.values={control.button_count,4b0,4d4,4d1};}
+      if (reg.score== 42){ seg_display.values={control.button_count,4b0,4d4,4d2};}
+      if (reg.score== 43){ seg_display.values={control.button_count,4b0,4d4,4d3};}
+      if (reg.score== 44){ seg_display.values={control.button_count,4b0,4d4,4d4};}
+      if (reg.score== 45){ seg_display.values={control.button_count,4b0,4d4,4d5};}
+      if (reg.score== 46){ seg_display.values={control.button_count,4b0,4d4,4d6};}
+      if (reg.score== 47){ seg_display.values={control.button_count,4b0,4d4,4d7};}
+      if (reg.score== 48){ seg_display.values={control.button_count,4b0,4d4,4d8};}
+      if (reg.score== 49){ seg_display.values={control.button_count,4b0,4d4,4d9};}
+      if (reg.score== 50){ seg_display.values={control.button_count,4b0,4d5,4d0};}
+      if (reg.score== 51){ seg_display.values={control.button_count,4b0,4d5,4d1};}
+      if (reg.score== 52){ seg_display.values={control.button_count,4b0,4d5,4d2};}
+      if (reg.score== 53){ seg_display.values={control.button_count,4b0,4d5,4d3};}
+      if (reg.score== 54){ seg_display.values={control.button_count,4b0,4d5,4d4};}
+      if (reg.score== 55){ seg_display.values={control.button_count,4b0,4d5,4d5};}
+      if (reg.score== 56){ seg_display.values={control.button_count,4b0,4d5,4d6};}
+      if (reg.score== 57){ seg_display.values={control.button_count,4b0,4d5,4d7};}
+      if (reg.score== 58){ seg_display.values={control.button_count,4b0,4d5,4d8};}
+      if (reg.score== 59){ seg_display.values={control.button_count,4b0,4d5,4d9};}
+      if (reg.score== 60){ seg_display.values={control.button_count,4b0,4d6,4d0};}
+      if (reg.score== 61){ seg_display.values={control.button_count,4b0,4d6,4d1};}
+      if (reg.score== 62){ seg_display.values={control.button_count,4b0,4d6,4d2};}
+      if (reg.score== 63){ seg_display.values={control.button_count,4b0,4d6,4d3};}
+      if (reg.score== 64){ seg_display.values={control.button_count,4b0,4d6,4d4};}
+      if (reg.score== 65){ seg_display.values={control.button_count,4b0,4d6,4d5};}
+      if (reg.score== 66){ seg_display.values={control.button_count,4b0,4d6,4d6};}
+      if (reg.score== 67){ seg_display.values={control.button_count,4b0,4d6,4d7};}
+      if (reg.score== 68){ seg_display.values={control.button_count,4b0,4d6,4d8};}
+      if (reg.score== 69){ seg_display.values={control.button_count,4b0,4d6,4d9};}
+      if (reg.score== 70){ seg_display.values={control.button_count,4b0,4d7,4d0};}
+      if (reg.score== 71){ seg_display.values={control.button_count,4b0,4d7,4d1};}
+      if (reg.score== 72){ seg_display.values={control.button_count,4b0,4d7,4d2};}
+      if (reg.score== 73){ seg_display.values={control.button_count,4b0,4d7,4d3};}
+      if (reg.score== 74){ seg_display.values={control.button_count,4b0,4d7,4d4};}
+      if (reg.score== 75){ seg_display.values={control.button_count,4b0,4d7,4d5};}
+      if (reg.score== 76){ seg_display.values={control.button_count,4b0,4d7,4d6};}
+      if (reg.score== 77){ seg_display.values={control.button_count,4b0,4d7,4d7};}
+      if (reg.score== 78){ seg_display.values={control.button_count,4b0,4d7,4d8};}
+      if (reg.score== 79){ seg_display.values={control.button_count,4b0,4d7,4d9};}
+      if (reg.score== 80){ seg_display.values={control.button_count,4b0,4d8,4d0};}
+      if (reg.score== 81){ seg_display.values={control.button_count,4b0,4d8,4d1};}
+      if (reg.score== 82){ seg_display.values={control.button_count,4b0,4d8,4d2};}
+      if (reg.score== 83){ seg_display.values={control.button_count,4b0,4d8,4d3};}
+      if (reg.score== 84){ seg_display.values={control.button_count,4b0,4d8,4d4};}
+      if (reg.score== 85){ seg_display.values={control.button_count,4b0,4d8,4d5};}
+      if (reg.score== 86){ seg_display.values={control.button_count,4b0,4d8,4d6};}
+      if (reg.score== 87){ seg_display.values={control.button_count,4b0,4d8,4d7};}
+      if (reg.score== 88){ seg_display.values={control.button_count,4b0,4d8,4d8};}
+      if (reg.score== 89){ seg_display.values={control.button_count,4b0,4d8,4d9};}
+      if (reg.score== 90){ seg_display.values={control.button_count,4b0,4d9,4d0};}
+      if (reg.score== 91){ seg_display.values={control.button_count,4b0,4d9,4d1};}
+      if (reg.score== 92){ seg_display.values={control.button_count,4b0,4d9,4d2};}
+      if (reg.score== 93){ seg_display.values={control.button_count,4b0,4d9,4d3};}
+      if (reg.score== 94){ seg_display.values={control.button_count,4b0,4d9,4d4};}
+      if (reg.score== 95){ seg_display.values={control.button_count,4b0,4d9,4d5};}
+      if (reg.score== 96){ seg_display.values={control.button_count,4b0,4d9,4d6};}
+      if (reg.score== 97){ seg_display.values={control.button_count,4b0,4d9,4d7};}
+      if (reg.score== 98){ seg_display.values={control.button_count,4b0,4d9,4d8};}
+      if (reg.score== 99){ seg_display.values={control.button_count,4b0,4d9,4d9};}
+      
+      seg_display.decimal = 4b0; // no decimal points
+   
+      io_seg = ~seg_display.seg; // module assumes active high so invert
+      io_sel = ~seg_display.sel;
+      }
+  
+    //initialization to some signals
+    generator.seed=32b1;
+    alu.b=16b0;
     
-    // LED show button situation
-    io_led[0][1] = buttoncond.out;
-    io_led[0][2] = io_button[0];
-    // io_led[0][3] = buttondetector.out;
-  }
+    //selecting alu input a
+    if (control.asel==0) 
+      {alu.a=reg.read_data_1;}
+    else {alu.a=16b0;}
+    
+    //selecting alu input b
+    case (control.bsel){
+      3h0:
+      alu.b=reg.read_data_2;
+      3h1:
+      alu.b[15:2] = 14b0;
+      alu.b[1:0] = generator.num[1:0];
+      3h2:
+      alu.b=16h2;
+      3h3:
+      if (edgeDetect1.out==1) {alu.b=16b0;} //blue:00
+      if (edgeDetect2.out==1) {alu.b=16b1;} //yellow:01
+      if (edgeDetect3.out==1) {alu.b=16b10;} //green:10
+      if (edgeDetect4.out==1) {alu.b=16b11;} //red:11
+      3h4:
+      alu.b=16b1;
+    }
+    
+    //inputs to control unit:
+    control.start_button=edgeDetect5.out;
+    control.reset = edgeDetect6.out;
+    control.is_correct=reg.is_correct;
+    
+    if ( edgeDetect1.out==1||edgeDetect2.out==1 || edgeDetect3.out==1 || edgeDetect4.out==1){
+      control.button_input=1;
+    }
+     else{
+     control.button_input=0;
+    }
+      
+    control.timer=timer.out;
+    
+    //inputs to regfile
+    reg.read_address_1=control.ra;
+    reg.read_address_2=control.rb;
+    reg.write_enable=control.we;
+    reg.write_address=control.rc;
+    reg.erase_reg = control.erase_reg;
+    reg.erase_score=control.erase_score;
+    reg.write_data=alu.out; //don't need wdsel
+
+    generator.next=control.gen_next;
+
+    alu.alufn=control.alufn;  
+    
+    //debug mode, can use dip to control different views:
+    case (io_dip[2]){
+      8b0:
+      //default, debug displays shut off
+      io_led = {8b0,8b0,8b0};
+
+      8b1:
+      io_led[2]=alu.out[15:8];
+      io_led[1] = alu.out[7:0];
+      io_led[0][7:2] = control.alufn;
+        
+      8h2:
+      io_led[2][7:4] = control.ra;
+      io_led[2][3:0] = control.rb;
+      io_led[1][7:4] = control.rc;
+      io_led[0][2]=slowclock.value;
+      io_led[0][3] = control.led_enable;
+        
+      8h3:
+      io_led[2]=reg.read_data_1[15:8];
+      io_led[1] = reg.read_data_1[7:0];
+        
+       8h4:
+      io_led[2]=reg.read_data_2[15:8];
+        io_led[1] = reg.read_data_2[7:0];
+      8h5:
+      io_led[2][7] = control.asel;
+        io_led[2][6:4] = control.bsel;
+        
+      //8h6:
+      //io_led[2] = reg.answer[15:8];
+        //io_led[1] = reg.answer[7:0];
+        //io_led[0][7:4] = reg.button;
+        
+      8h7:
+      io_led[2][7:4] = control.button_count;
+        io_led[1] = reg.score[7:0];
+        
+      8h8:
+      //io_led[2]=reg.question[15:8];
+      //io_led[1] = reg.question[7:0];
+        
+      io_led[0][7]=control.we;
+      io_led[0][1:0]=generator.num[1:0];
+        
+    }
+    
+    //default value for custom led:
+    yellowout=0;
+    blueout=0;
+    redout=0;
+    greenout=0;
+      
+    //displaying the problem sequence using customized led:
+    if (control.led_enable && (~slowclock.value)){
+      if (generator.num[1:0]==b00){blueout=1;}
+      if (generator.num[1:0] == b01) {yellowout=1;}
+      if (generator.num[1:0]==b10) {greenout=1;}
+      if (generator.num[1:0] == b11) {redout=1;}
+    }
+
 }

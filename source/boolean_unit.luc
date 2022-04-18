@@ -1,12 +1,12 @@
 module boolean_unit (
-    // Define the inputs and outputs
+    //a,b are 16 bits
     input a[16],
     input b[16],
     input alufn[6],
     output out[16]
   ) {
   always {
-    //When alufn is [3:0]
+    //take last 4 bits of alufn
     case(alufn[3:0]){
       // Boolean function
       b1000: out = a & b;

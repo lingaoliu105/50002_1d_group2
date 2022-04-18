@@ -1,0 +1,603 @@
+module control_unit (
+    input clk,  // clock
+    input rst,  // reset
+    input start_button,
+    input button_input,  //either 1 or 0, specifically used to show there is input
+    input timer,
+    input is_correct, //used to jump to s1/s2
+    input reset,
+    output led_enable,
+    output we,
+    output asel,
+    output bsel[3],
+    output alufn[6],
+    output ra[4],
+    output rb[4],
+    output rc[4],
+    output gen_next,
+    output erase_reg,
+    output erase_score,
+    output button_count[4]
+    
+  ) {
+   fsm central_fsm(.clk(clk),.rst(rst)) = {S1,
+  S2,
+S3,
+S4,
+S5,
+S6,
+S7,
+S8,
+S9,
+S10,
+S11,
+S12,
+S13,
+S14,
+S15,
+S16,
+S17,
+S18,
+S19,
+S20,
+S21,
+S22,
+S23,
+S24,
+S25,
+S26,
+S27,
+S28,
+S29,
+S30,
+S31,
+S32,
+S33,
+S34,
+S35,
+S36,
+S37,
+S38,
+S39,
+S40,
+S41,
+S42,
+S43,
+S44,
+S45,
+S46,
+S47,
+S48,
+S49,
+S50};
+
+  always {
+    //default output
+    we=0;
+    asel=0;
+    bsel=000;
+    alufn=6h1A;
+    ra=0000;
+    rb=0000;
+    rc=4h4;
+    led_enable=0;
+    gen_next=0; 
+    erase_reg = 0;
+    erase_score=0;
+    button_count=4b0;
+    
+    //states:
+    case (central_fsm.q){
+      central_fsm.S1:
+        if (start_button==1){
+          central_fsm.d=central_fsm.S2;
+        }
+        gen_next=1;
+        erase_score=1;
+     
+      central_fsm.S2:
+        if (timer==1){
+         central_fsm.d=central_fsm.S3;
+        }
+        erase_reg=1;
+        we=0;
+        gen_next=1;
+        
+      central_fsm.S3:
+        we=1;
+        asel=0;
+        bsel=3h1;
+        alufn=6b0;
+        ra=4b0;
+        rc=4b0;
+        
+        central_fsm.d=central_fsm.S4;
+
+        
+      central_fsm.S4:
+        if (timer==1){
+        central_fsm.d=central_fsm.S5;
+          }
+        we=0;
+        led_enable=1;
+        bsel=3h2;
+        
+      central_fsm.S5:
+        we=1;
+        asel=0;
+        bsel=3h2;
+        alufn=6h20;
+        ra=4b0;
+        rc=4b0;
+        central_fsm.d=central_fsm.S6;
+           
+      central_fsm.S6:
+        we=1;
+        asel=0;
+        bsel=3h1;
+        alufn=6b0;
+        ra=4b0;
+        rc=4b0;
+
+        central_fsm.d=central_fsm.S7;
+        
+
+        
+      central_fsm.S7:
+        if (timer==1){
+        central_fsm.d=central_fsm.S8;
+          }
+        we=0;
+        led_enable=1;
+        bsel=3h2;
+        
+      central_fsm.S8:
+        we=1;
+        asel=0;
+        bsel=3h2;
+        alufn=6h20;
+        ra=4b0;
+        gen_next=1;
+        rc=4b0;
+        central_fsm.d=central_fsm.S9;
+        
+      central_fsm.S9:
+        we=1;
+        asel=0;
+        bsel=3h1;
+        alufn=6b0;
+        ra=4b0;
+        rc=4b0;
+
+        central_fsm.d=central_fsm.S10;
+        
+      central_fsm.S10:
+        if (timer==1){
+        central_fsm.d=central_fsm.S11;
+          }
+        we=0;
+        led_enable=1;
+        bsel=3h2;
+        
+      central_fsm.S11:
+        we=1;
+        asel=0;
+        bsel=3h2;
+        alufn=6h20;
+        ra=4b0;
+        gen_next=1;
+        rc=4b0;
+        central_fsm.d=central_fsm.S12;
+        
+    central_fsm.S12:
+        we=1;
+        asel=0;
+        bsel=3h1;
+        alufn=6b0;
+        ra=4b0;
+        rc=4b0;
+
+        central_fsm.d=central_fsm.S13;
+       
+        
+      central_fsm.S13:
+        if (timer==1){
+        central_fsm.d=central_fsm.S14;
+          }
+        we=0;
+        led_enable=1;
+        bsel=3h2;
+        
+      central_fsm.S14:
+        we=1;
+        asel=0;
+        bsel=3h2;
+        alufn=6h20;
+        ra=4b0;
+        gen_next=1;
+        rc=4b0;
+        central_fsm.d=central_fsm.S15;
+        
+    central_fsm.S15:
+        we=1;
+        asel=0;
+        bsel=3h1;
+        alufn=6b0;
+        ra=4b0;
+        rc=4b0;
+        
+
+        central_fsm.d=central_fsm.S16;
+        
+      central_fsm.S16:
+        if (timer==1){
+        central_fsm.d=central_fsm.S17;
+          }
+        we=0;
+        led_enable=1;
+        bsel=3h2;
+        
+      central_fsm.S17:
+        we=1;
+        asel=0;
+        bsel=3h2;
+        alufn=6h20;
+        ra=4b0;
+        gen_next=1;
+        rc=4b0;
+        central_fsm.d=central_fsm.S18;
+        
+    central_fsm.S18:
+        we=1;
+        asel=0;
+        bsel=3h1;
+        alufn=6b0;
+        ra=4b0;
+        rc=4b0;
+
+        central_fsm.d=central_fsm.S19;
+        
+        
+      central_fsm.S19:
+        if (timer==1){
+        central_fsm.d=central_fsm.S20;
+          }
+        we=0;
+        led_enable=1;
+        bsel=3h2;
+        
+      central_fsm.S20:
+        we=1;
+        asel=0;
+        bsel=3h2;
+        alufn=6h20;
+        ra=4b0;
+        gen_next=1;
+        rc=4b0;
+        central_fsm.d=central_fsm.S21;
+        
+      central_fsm.S21:
+        we=1;
+        asel=0;
+        bsel=3h1;
+        alufn=6b0;
+        ra=4b0;
+        rc=4b0;
+
+        central_fsm.d=central_fsm.S22;
+
+      central_fsm.S22:
+        if (timer==1){
+        central_fsm.d=central_fsm.S23;
+          }
+        we=0;
+        led_enable=1;
+        bsel=3h2;
+
+      central_fsm.S23:
+        we=1;
+        asel=0;
+        bsel=3h2;
+        alufn=6h20;
+        ra=4b0;
+        gen_next=1;
+        rc=4b0;
+        central_fsm.d=central_fsm.S24;
+      
+      central_fsm.S24:
+        we=1;
+        asel=0;
+        bsel=3h1;
+        alufn=6b0;
+        ra=4b0;
+        rc=4b0;
+
+        central_fsm.d=central_fsm.S25;
+        
+
+      central_fsm.S25:
+        if (timer==1){
+        central_fsm.d=central_fsm.S26;
+          }
+        we=0;
+        led_enable=1;
+        
+        
+        // 26 idle
+
+      central_fsm.S26:
+        we=0;
+        if (button_input!=0){
+          central_fsm.d=central_fsm.S27;
+          bsel=3h3;
+          asel=1;
+          alufn=6h0;
+          we=1;
+          rc=4h5;
+        }
+        
+      
+      central_fsm.S27:
+        we=1;
+        asel=0;
+        bsel=3h0;
+        alufn=6b0;
+        ra=4h2;
+        rb=4h5;
+        rc=4h2;
+        central_fsm.d=central_fsm.S28;
+
+      central_fsm.S28:
+        we=1;
+        asel=0;
+        bsel=3h2;
+        alufn=6h20;
+        ra=4h2;
+        rc=4h2;
+        central_fsm.d=central_fsm.S29;
+        
+      central_fsm.S29:
+        we=0;
+        button_count=4d1;
+        if (button_input!=0){
+        central_fsm.d=central_fsm.S30;
+          bsel=3h3;
+          asel=1;
+          alufn=6h0;
+          we=1;
+          rc=4h5;
+        }
+        if (reset){central_fsm.d=central_fsm.S26;}
+        
+    central_fsm.S30:
+        we=1;
+        asel=0;
+        bsel=3h0;
+        alufn=6b0;
+        ra=4h2;
+        rb=4h5;
+        rc=4h2;
+        central_fsm.d=central_fsm.S31;
+
+      central_fsm.S31:
+        we=1;
+        asel=0;
+        bsel=3h2;
+        alufn=6h20;
+        ra=4h2;
+        rc=4h2;
+        central_fsm.d=central_fsm.S32;
+        
+      central_fsm.S32:
+        we=0;
+        button_count=4d2;
+        if (button_input!=0){
+        central_fsm.d=central_fsm.S33;
+          bsel=3h3;
+          asel=1;
+          alufn=6h0;
+          we=1;
+          rc=4h5;
+        }
+        if (reset){central_fsm.d=central_fsm.S26;}
+        
+    central_fsm.S33:
+        we=1;
+        asel=0;
+        bsel=3h0;
+        alufn=6b0;
+        ra=4h2;
+        rb=4h5;
+        rc=4h2;
+        central_fsm.d=central_fsm.S34;
+        
+
+      central_fsm.S34:
+        we=1;
+        asel=0;
+        bsel=3h2;
+        alufn=6h20;
+        ra=4h2;
+        rc=4h2;
+        central_fsm.d=central_fsm.S35;
+        
+      central_fsm.S35:
+        we=0;
+        button_count=4d3;
+        if (button_input!=0){
+        central_fsm.d=central_fsm.S36;
+          bsel=3h3;
+          asel=1;
+          alufn=6h0;
+          we=1;
+          rc=4h5;
+        }
+        if (reset){central_fsm.d=central_fsm.S26;}
+        
+    central_fsm.S36:
+        we=1;
+        asel=0;
+        bsel=3h0;
+        alufn=6b0;
+        ra=4h2;
+        rb=4h5;
+        rc=4h2;
+        central_fsm.d=central_fsm.S37;
+
+      central_fsm.S37:
+        we=1;
+        asel=0;
+        bsel=3h2;
+        alufn=6h20;
+        ra=4h2;
+        rc=4h2;
+        central_fsm.d=central_fsm.S38;
+        
+      central_fsm.S38:
+        we=0;
+        button_count=4d4;
+        if (button_input!=0){
+        central_fsm.d=central_fsm.S39;
+          bsel=3h3;
+          asel=1;
+          alufn=6h0;
+          we=1;
+          rc=4h5;
+        }
+        if (reset){central_fsm.d=central_fsm.S26;}
+        
+    central_fsm.S39:
+        we=1;
+        asel=0;
+        bsel=3h0;
+        alufn=6b0;
+        ra=4h2;
+        rb=4h5;
+        rc=4h2;
+        central_fsm.d=central_fsm.S40;
+
+      central_fsm.S40:
+        we=1;
+        asel=0;
+        bsel=3h2;
+        alufn=6h20;
+        ra=4h2;
+        rc=4h2;
+        central_fsm.d=central_fsm.S41;
+        
+      central_fsm.S41:
+        we=0;
+        button_count=4d5;
+        if (button_input!=0){
+        central_fsm.d=central_fsm.S42;
+          bsel=3h3;
+          asel=1;
+          alufn=6h0;
+          we=1;
+          rc=4h5;
+        }
+        if (reset){central_fsm.d=central_fsm.S26;}
+        
+    central_fsm.S42:
+        we=1;
+        asel=0;
+        bsel=3h0;
+        alufn=6b0;
+        ra=4h2;
+        rb=4h5;
+        rc=4h2;
+        central_fsm.d=central_fsm.S43;
+
+      central_fsm.S43:
+        we=1;
+        asel=0;
+        bsel=3h2;
+        alufn=6h20;
+        ra=4h2;
+        rc=4h2;
+        central_fsm.d=central_fsm.S44;
+        
+      central_fsm.S44:
+        we=0;
+        button_count=4d6;
+        if (button_input!=0){
+        central_fsm.d=central_fsm.S45;
+          bsel=3h3;
+          asel=1;
+          alufn=6h0;
+          we=1;
+          rc=4h5;
+        }
+        if (reset){central_fsm.d=central_fsm.S26;}
+        
+    central_fsm.S45:
+        we=1;
+        asel=0;
+        bsel=3h0;
+        alufn=6b0;
+        ra=4h2;
+        rb=4h5;
+        rc=4h2;
+        central_fsm.d=central_fsm.S46;
+
+      central_fsm.S46:
+        we=1;
+        asel=0;
+        bsel=3h2;
+        alufn=6h20;
+        ra=4h2;
+        rc=4h2;
+        central_fsm.d=central_fsm.S47;
+        
+      central_fsm.S47:
+        we=0;
+        button_count=4d7;
+        if (button_input!=0){
+        central_fsm.d=central_fsm.S48;
+          bsel=3h3;
+          asel=1;
+          alufn=6h0;
+          we=1;
+          rc=4h5;
+        }
+        if (reset){central_fsm.d=central_fsm.S26;}
+
+      central_fsm.S48:
+        we=1;
+        asel=0;
+        bsel=3h0;
+        alufn=6b0;
+        ra=4h2;
+        rb=4h5;
+        rc=4h2;
+        central_fsm.d=central_fsm.S49;
+        
+      central_fsm.S49:
+        asel=0;
+        bsel=0;
+        ra=4h0;
+        rb=4h2;
+        alufn=6h33;
+        we=1;
+        rc=4h6;
+        
+        central_fsm.d=central_fsm.S50;
+      
+      central_fsm.S50:
+        if (is_correct==0){
+          central_fsm.d=central_fsm.S1;
+        }
+        else{
+          we=1;
+          alufn=6b0;
+          ra=4h1;
+          asel=0;
+          bsel=3h4;
+          rc=4h1;
+          central_fsm.d=central_fsm.S2;
+
+        }
+        
+    }
+  }
+}

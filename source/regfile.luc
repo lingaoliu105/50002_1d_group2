@@ -1,0 +1,46 @@
+module regfile (
+    input clk,  // clock
+    input rst,  // reset
+    input read_address_1[4],
+    input read_address_2[4],
+    input erase_reg,
+    input erase_score,
+
+    output read_data_1[16],
+    output read_data_2[16],
+    input write_address[4],
+    input write_data[16],
+    input write_enable,
+    output score[16],
+    //output question[16],
+    //output answer[16],
+    //output button[4],
+    output is_correct
+  ) {
+  dff registers[7][16](.clk(clk));
+  always {
+  
+    //addr 4: useless, trash bin
+    if (erase_reg){
+    registers.d[4h0] = 16b0;//question
+      registers.d[4h2] = 16b0;//answer
+      registers.d[4h3] = 16b0;//num of button press
+      registers.d[4h5] = 16b0;//button pressed just now
+      registers.d[4h6] = 16b0;}//compare ans vs qn result
+    if (erase_score){registers.d[4h1]=16d0;}  //score
+        //always read 
+    read_data_1 = registers.q[read_address_1];
+    read_data_2 = registers.q[read_address_2];
+    
+    score = registers.q[4b1];
+    //question = registers.q[4h0];
+    //answer = registers.q[4h2];
+    //button=registers.q[4h5][3:0];
+    is_correct=registers.q[4h6][0];
+    
+    if (write_enable){
+        registers.d[write_address] = write_data;
+    }
+    
+  }
+}

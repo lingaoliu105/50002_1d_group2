@@ -1,22 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="1d50002BaseProj" board="Alchitry Au" language="Lucid" version="3">
   <files>
-    <component>edge_detector.luc</component>
-    <component>counter.luc</component>
-    <src>fsm1.luc</src>
-    <src>shifter_unit.luc</src>
-    <component>button_conditioner.luc</component>
-    <src top="true">au_top.luc</src>
+    <src>multi_seven_seg.luc</src>
     <component>reset_conditioner.luc</component>
-    <component>pipeline.luc</component>
-    <src>tester.luc</src>
     <src>boolean_unit.luc</src>
+    <component>decoder.luc</component>
+    <component>button_conditioner.luc</component>
     <src>adder_unit.luc</src>
+    <component>pn_gen.luc</component>
+    <src>shifter_unit.luc</src>
+    <src>regfile.luc</src>
+    <component>edge_detector.luc</component>
+    <src>digit_lut.luc</src>
     <src>compare_unit.luc</src>
+    <src>control_unit.luc</src>
+    <src top="true">au_top.luc</src>
+    <component>counter.luc</component>
+    <component>pipeline.luc</component>
     <src>rom.luc</src>
     <src>alu.luc</src>
-    <constraint lib="true">au.xdc</constraint>
-    <constraint lib="true">io.acf</constraint>
-    <constraint lib="true">alchitry.acf</constraint>
+    <constraint>au.xdc</constraint>
+    <constraint>io.acf</constraint>
+    <constraint>alchitry.acf</constraint>
   </files>
 </project>
